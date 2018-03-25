@@ -1,17 +1,16 @@
-# sorteio
-Simple tool to raffle gifts.
+# Sorteio
+Simple tool to help with the gifts raffle.
 
 
-## Adding members to the raffle
+## Adding new participants to the raffle
 
-Just add their names in the members.json file.
+Just add their names in the participants.json file.
 
 ```json
 [
-  "member 1",
-  "member 2",
-  "member 3",
-  "member 4"
+  "John Doe",
+  "Lisa Park",
+  "Louis Harrison",
+  "Jake McGregory"
 ]
-
 ```
