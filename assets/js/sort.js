@@ -1,13 +1,18 @@
 $( document ).ready(function() {
 
-  var gridMembers = document.getElementById('grid-members');
-  var btnSort = document.getElementById('btn-sort');
-  var timesToSort = null;
-  var participants = [];
+  var participantsGrid = document.getElementById('participants-grid');
+  var raffleBtn = document.getElementById('sort-btn');
+
+  var timesToSort = 3;
   var totalParticipants = 0;
-  var winners = [];
+
   var sorting = null;
-  var sortedMemberId = null;
+  var lastParticipantSortered = null;
+  var sortedParticipant = null;
+
+  var participants = [];
+  var winners = [];
+  var sortereds = [];
 
   function setup() {
     bindBtnClick();
@@ -15,107 +20,86 @@ $( document ).ready(function() {
   }
 
   function bindBtnClick() {
-    $(btnSort).on('click', function() {
-      getNumberOfTimes();
-      sortMember();
-      $(this).attr('disabled', true).text('Sorteando...');
+    $(raffleBtn).on('click', function() {
+      sortParticipant();
+      toggleRaffleButtonStatus(true, 'Raffling...');
     });
   }
 
   function getMembers() {
-    $.getJSON("members.json", function(members) {
+    $.getJSON("participants.json", function(members) {
       var items = [];
-
       totalParticipants = members.length;
 
       $.each(members, function(id, nome) {
         participants.push(nome);
-        items.push('<div class="member"><span class="member-name">' + nome + '</span></div>');
+        items.push('<div class="participant"><span class="participant-name">' + nome + '</span></div>');
       });
 
-      $(gridMembers).html(items);
+      $(participantsGrid).html(items);
     });
   }
 
-  function getNumberOfTimes() {
-    timesToSort = Math.floor((Math.random() * 7) + 1);
-    timesToSort = (timesToSort < 4) ? 4 : timesToSort;
-  }
-
-  function sortMember() {
+  function sortParticipant() {
     clearInterval(sorting);
-    sorting = setInterval(getRandomMember, 1000);
+    sorting = setInterval(getRandomParticipant, 700);
   }
 
-  function getRandomMember() {
+  function getRandomParticipant() {
     var memberId = Math.floor((Math.random() * totalParticipants) + 1) - 1;
-    console.log(memberId);
 
-    while (memberId == sortedMemberId) {
-      memberId = Math.floor((Math.random() * totalParticipants) + 1) - 1;
+    while (winners.indexOf(memberId) > -1) {
+      getRandomParticipant();
+      return;
     }
 
-    sortedMemberId = memberId;
+    while (lastParticipantSortered == memberId) {
+      getRandomParticipant();
+      return;
+    }
+
+    sortedParticipant = $('.participant').eq(memberId);
+    lastParticipantSortered = memberId;
+    sortereds.push(memberId);
     setMemberActive(memberId);
   }
 
   function setMemberActive(memberId) {
-    $('.member.active').removeClass('active');
-    $('.member').eq(memberId).addClass('active');
-    scrollToMember(memberId);
+    $('.participant.active').removeClass('active');
+    sortedParticipant.addClass('active');
+    scrollToMember();
 
     timesToSort = timesToSort - 1;
-
     if (timesToSort > 0) {
-      sortMember();
+      sortParticipant();
     } else {
       clearInterval(sorting);
       setWinner(memberId);
     }
   }
-
-
-  function defineMember() {
-    var memberId = Math.floor((Math.random() * totalParticipants) + 1) - 1;
-
-    while (memberId == sortedMemberId) {
-      memberId = Math.floor((Math.random() * totalParticipants) + 1) - 1;
-    }
-    sortedMemberId = memberId;
-
-    $('.member.active').removeClass('active');
-    $('.member').eq(memberId).addClass('active');
-    scrollToMember(memberId);
-
-    timesToSort = timesToSort - 1;
-
-    if (timesToSort > 0) {
-      sortMember();
-    } else {
-      clearInterval(sorting);
-      setWinner(memberId);
-    }
-  }
-
 
   function setWinner(memberId) {
-    if (winners.indexOf(memberId) > -1) {
-      sortMember();
-    } else {
-      var member = $('.member').eq(memberId);
-      $('.member.current-winner').removeClass('current-winner');
-      member.removeClass('active').addClass(['winner', 'current-winner']);
-      $(btnSort).attr('disabled', false).text('Sortear novamente');
-      scrollToMember(memberId);
-      winners.push(memberId);
-    }
+    winners.push(memberId);
+    toggleRaffleButtonStatus(false, 'Raffle again');
+    $('.participant.current-winner').removeClass('current-winner');
+    sortedParticipant.removeClass('active').addClass(['winner', 'current-winner']);
+    scrollToMember(memberId);
+    resetRaffle();
+  }
+
+  function toggleRaffleButtonStatus(status, text) {
+    $(raffleBtn).attr('disabled', status).text(text);
   }
 
   function scrollToMember(memberId) {
-    var member = $('.member').eq(memberId);
     $('html, body').animate({
-      scrollTop: member.offset().top - 50
+      scrollTop: sortedParticipant.offset().top - 50
     });
+  }
+
+  function resetRaffle() {
+    timesToSort = 3;
+    sortereds = [];
   }
 
   setup();

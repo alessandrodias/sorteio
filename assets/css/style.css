@@ -6,11 +6,11 @@
 
 body {
   font-family: Arial, sans-serif;
-  max-width: 1100px;
+  max-width: 95vw;
   margin: 0 auto;
 }
 
-.btn-sort {
+.sort-btn {
   display: block;
   width: 300px;
   margin: 40px auto;
@@ -24,29 +24,24 @@ body {
   outline: 0;
 }
 
-.btn-sort:hover {
+.sort-btn:hover {
   background: #f9f9f9;
 }
 
-.btn-sort:disabled {
+.sort-btn:disabled {
   cursor: not-allowed;
   background: #d0cfcf;
 }
 
 .grid {
-  display: block;
-  width: 100%;
-  margin: 20px auto;
-}
-
-.grid-row {
   display: flex;
   flex-wrap: wrap;
   text-align: center;
   justify-content: center;
+  margin: 20px auto;
 }
 
-.member {
+.participant {
   position: relative;
   flex: 1;
   background: #e8e8e8;
@@ -56,10 +51,10 @@ body {
   min-width: 200px;
   max-width: 200px;
   height: 80px;
-  border-radius: 4px;
+  border-radius: 5px;
 }
 
-.member .member-name {
+.participant .participant-name {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -69,24 +64,24 @@ body {
   text-transform: uppercase;
 }
 
-.member.active {
+.participant.active {
   border: 2px dashed #404040 !important;
 }
 
-.member.winner {
+.participant.winner {
   background: #ffe500;
-  border: 2px solid #ffe500;
+  border-color: #ffe500;
 }
 
-.member.winner:not(.current-winner) {
+.participant.winner:not(.current-winner) {
   opacity: 0.7;
 }
 
-.member.winner:not(.current-winner) .member-name {
+.participant.winner:not(.current-winner) .participant-name {
   text-decoration: line-through;
 }
 
-.member.current-winner {
-  background: #71dc8d !important;
-  border: 2px solid #71dc8d !important;
+.participant.winner.current-winner {
+  background: #71dc8d;
+  border-color: #71dc8d;
 }
